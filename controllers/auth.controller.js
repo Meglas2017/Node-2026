@@ -1,4 +1,5 @@
 import {generateToken} from "../utils/token-generator.js"
+import { verifyUser } from "../services/auth.service.js"
 
 
 const auth = async (req, res) => {
@@ -6,9 +7,9 @@ const auth = async (req, res) => {
     
 
     try {
-        console.log("Autorizando:", email, password);
-
-        const user = {id: 1, email: email}
+        console.log("Autorizando:", email, password)
+        const user = await verifyUser(email, password)
+        console.log("Usuario verificado:", user)
         const token = generateToken(user)
 
         res.status(202).json({message:"Autorizando", token:token})

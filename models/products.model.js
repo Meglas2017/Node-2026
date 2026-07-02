@@ -38,9 +38,8 @@ export async function saveProduct(product) {
 
 /* Funcion para eliminar producto */
 export async function deleteProduct(id) {
-    console.log(id);
     const productRef = doc(productsCollections, id);
-    const docRef = await deleteDoc(productRef)
+    return await deleteDoc(productRef)
 }
 
 /* Funcion para actualizar un producto */

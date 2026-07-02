@@ -1,16 +1,17 @@
 import {
-    getAllProducts,
-    getProductById,
-    saveProduct,
-    deleteProduct,
-    updateProduct
-    } from "../models/products.model.js"
+    getAllService,
+    getByIdService,
+    saveService,
+    deleteService,
+    updateService
+
+} from "../services/products.service.js"
 
 /* Funcion para obtener todos los productos */
 const getAll = async (req, res) => { 
     console.log("GET ALL")
     try {
-        const allProducts = await getAllProducts()
+        const allProducts = await getAllService()
         
         res.status(200).json(allProducts)
     } catch (error) {
@@ -22,9 +23,13 @@ const getAll = async (req, res) => {
 /* Funcion para obtener un producto por ID */
 const byId = async (req, res) => { 
     const id = req.params.id //Recupero el ID de parametros para utilizarlo en la busqueda
+    if(!id) { //Verifico que exista un ID para consulta
+        res.status(400).json({message: "Falta ID"})
+        return
+    }
     console.log("GET by ID: ",id) //Debug 
     try {
-        const product = await getProductById(id)
+        const product = await getByIdService(id)
         res.status(200).json(product)
     } catch (error) {
         console.log(error);
@@ -35,9 +40,13 @@ const byId = async (req, res) => {
 /* Funcion para crear un nuevo producto en la BBDD */
 const addItem = async (req, res) => { 
     const product = req.body
+    if(!product) { //Verifico que exista un producto para agregar
+        res.status(400).json({message: "Falta producto a agregar"})
+        return
+    }
     console.log("Agregar producto nuevo:", product) //Debug 
     try {
-        const idRef = await saveProduct(product)
+        const idRef = await saveService(product)
         res.status(201).json(idRef)
     } catch (error) {
         console.log(error);
@@ -48,10 +57,17 @@ const addItem = async (req, res) => {
 /* Funcion para eliminar producto por ID */
 const deleteID = async (req, res) => { 
     const dID = req.params.id //Recupero ID para eliminar
+    if(!dID) { //Verifico que exista un ID para consulta
+        res.status(400).json({message: "Falta ID"})
+        return
+    }
     console.log("Eliminar producto por ID",dID) //Debug 
     try {
-        await deleteProduct(dID)
-        res.status(204).json({ message: `ID:${dID} eliminado`})
+        await deleteService(dID)
+        
+        res.status(200).json({ message: `${dID} eliminado`})
+        
+
     } catch (error) {
         console.log(error);
         res.status(500).send(error);
@@ -62,10 +78,18 @@ const deleteID = async (req, res) => {
 const updateProducts = async (req,res) => {
     const id = req.params.id
     const product = req.body
+    if(!id) { //Verifico que exista un ID para consulta
+        res.status(400).json({message: "Falta ID"})
+        return
+    }
+    if(!product) { //Verifico que exista un producto para actualizar
+        res.status(400).json({message: "Falta producto a actualizar"})
+        return
+    }
     console.log("Actualizar producto", id, product)
 
     try {
-        await updateProduct(id, product)
+        await updateService(id, product)
         res.status(200).json({message:`${id} actualizado`})
     } catch (error) {
         console.log(error)
